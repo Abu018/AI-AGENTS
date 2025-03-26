@@ -44,8 +44,7 @@ const Home = () => {
 
       setResult({
         filename: data.filename,
-        analysis: data.result,
-        rawData: data, // Store the complete response for debugging
+        analysis: data.result, // Direct text response
       });
     } catch (error) {
       console.error("Error:", error);
@@ -59,21 +58,6 @@ const Home = () => {
     setFile(null);
     setResult(null);
     setError(null);
-  };
-
-  const formatAnalysis = (analysis) => {
-    if (typeof analysis === "string") {
-      return analysis;
-    }
-
-    try {
-      if (analysis.output) {
-        return analysis.output;
-      }
-      return JSON.stringify(analysis, null, 2);
-    } catch {
-      return "Analysis results";
-    }
   };
 
   return (
@@ -142,7 +126,7 @@ const Home = () => {
           <div className="mt-4 p-4 bg-gray-600 rounded-lg">
             <h3 className="text-xl font-semibold mb-2">Analysis:</h3>
             <div className="whitespace-pre-wrap bg-gray-800 p-4 rounded">
-              {formatAnalysis(result.analysis)}
+              {result.analysis}
             </div>
           </div>
         </div>

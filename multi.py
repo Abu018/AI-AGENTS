@@ -34,14 +34,6 @@ def extract_text_from_pdf(pdf_path: str) -> str:
     except Exception as e:
         raise Exception(f"Error extracting text: {str(e)}")
 
-def custom_serializer(obj):
-    """Custom JSON serializer for objects not serializable by default."""
-    if hasattr(obj, 'dict'):  # For CrewAI objects with .dict() method
-        return obj.dict()
-    if hasattr(obj, '__dict__'):
-        return obj.__dict__
-    return str(obj)
-
 def process_pdf(pdf_path: str) -> Dict[str, Any]:
     """Processes the uploaded PDF using CrewAI."""
     try:
@@ -53,30 +45,30 @@ def process_pdf(pdf_path: str) -> Dict[str, Any]:
         resume_analyzer = Agent(
             llm="gpt-4",
             role="Resume Analyst",
-            goal="Extract key information such as experience, education, and skills.",
-            backstory="Expert HR professional.",
+            goal="Extract key information such as experience, education, and skills in clear plain text format.",
+            backstory="Expert HR professional with 10 years of experience analyzing resumes.",
             allow_delegation=False,
             verbose=True,
         )
 
         job_suitability_agent = Agent(
-            llm="gpt-4",
-            role="Job Suitability Evaluator", 
-            goal="Identify the best job roles for the candidate.",
-            backstory="Career advisor with deep expertise.",
+            llm="gpt-4", 
+            role="Job Suitability Evaluator",
+            goal="Identify the best job roles for the candidate and explain why in clear plain text.",
+            backstory="Career advisor with deep expertise in job market trends.",
             allow_delegation=False,
             verbose=True,
         )
 
         extract_resume_task = Task(
-            description=f"Extract key information from the resume:\n{resume_text}",
-            expected_output="A structured summary of the resume.",
+            description=f"Extract key information from this resume:\n{resume_text}",
+            expected_output="Clear plain text output with these sections:\n\nEXPERIENCE:\n- Bullet points of work experience\n\nEDUCATION:\n- Degrees and certifications\n\nSKILLS:\n- Technical and soft skills",
             agent=resume_analyzer,
         )
 
         job_suitability_task = Task(
-            description="Determine the most suitable job roles based on resume contents.",
-            expected_output="A job recommendation report.",
+            description="Analyze the resume content and recommend suitable job roles.",
+            expected_output="Plain text output with:\n\nRECOMMENDED ROLES:\n- 3-5 job titles that match the candidate's profile\n\nEXPLANATION:\n- Brief reasoning for each recommendation",
             agent=job_suitability_agent,
         )
 
@@ -88,12 +80,9 @@ def process_pdf(pdf_path: str) -> Dict[str, Any]:
 
         result = crew.kickoff()
         
-        # Use custom serialization
-        serialized_result = json.loads(json.dumps(result, default=custom_serializer))
-        
         return {
             "status": "success",
-            "analysis": serialized_result
+            "analysis": str(result)  # Convert to plain string
         }
 
     except Exception as e:
@@ -128,7 +117,7 @@ def upload_file():
         return jsonify({
             "status": "success",
             "filename": file.filename,
-            "result": result["analysis"]
+            "result": result["analysis"]  # Plain text response
         })
 
     except Exception as e:

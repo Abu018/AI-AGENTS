@@ -57,6 +57,7 @@ def process_pdf(pdf_path: str) -> Dict[str, Any]:
             goal="Identify the best job roles for the candidate and explain why in clear plain text.",
             backstory="Career advisor with deep expertise in job market trends.",
             allow_delegation=False,
+           
             verbose=True,
         )
 
@@ -64,12 +65,14 @@ def process_pdf(pdf_path: str) -> Dict[str, Any]:
             description=f"Extract key information from this resume:\n{resume_text}",
             expected_output="Clear plain text output with these sections:\n\nEXPERIENCE:\n- Bullet points of work experience\n\nEDUCATION:\n- Degrees and certifications\n\nSKILLS:\n- Technical and soft skills",
             agent=resume_analyzer,
+            async_execution=True,
         )
 
         job_suitability_task = Task(
             description="Analyze the resume content and recommend suitable job roles.",
             expected_output="Plain text output with:\n\nRECOMMENDED ROLES:\n- 3-5 job titles that match the candidate's profile\n\nEXPLANATION:\n- Brief reasoning for each recommendation",
             agent=job_suitability_agent,
+            async_execution=True,
         )
 
         crew = Crew(

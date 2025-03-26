@@ -2,3 +2,23 @@
 .env
 .env*
 !.env.example
+
+#step1 
+#created a react application for the front end where it take input as the pdf 
+#Sets up an upload folder to temporarily store PDF files
+
+#step2 
+# When a Request is Made to /upload (POST) here it check the .pdf extension and also check whether a file is selected or not 
+
+#step3 
+#process_pdf() these function will extract the pdf  details 
+
+#step4 
+# After step3 there are two agents Resume Analyst: Extracts key information (experience, education, skills)  and Job Suitability Evaluator: Recommends suitable job roles and respective task related to them 
+
+#these task runs sequentially not parallel  
+
+#step 5 
+#delete the path of the file and return success or failure 
+
+ 
